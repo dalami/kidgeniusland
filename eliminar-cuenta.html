@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eliminar cuenta — Kid Genius</title>
+<meta name="description" content="Cómo eliminar tu cuenta de Kid Genius y los datos asociados.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap site-nav">
+    <div class="brand"><span class="brand-mark">🦉</span> Kid Genius</div>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="privacidad.html">Privacidad</a>
+      <a href="terminos.html">Términos</a>
+      <a href="eliminar-cuenta.html" class="current">Eliminar cuenta</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="doc-header">
+    <div class="eyebrow">Tu cuenta, tus datos</div>
+    <h1>Eliminar tu cuenta</h1>
+    <p class="updated">Podés borrar tu cuenta y la de tus hijos en cualquier momento.</p>
+  </div>
+
+  <div class="card doc-card">
+    <h2>Opción 1 — Desde la app (la más rápida)</h2>
+    <ol>
+      <li>Abrí Kid Genius e ingresá con tu cuenta de adulto responsable.</li>
+      <li>Andá a <strong>Configuración</strong> (ícono ⚙️).</li>
+      <li>Tocá <strong>"Eliminar cuenta"</strong> al final de la pantalla.</li>
+      <li>Confirmá la acción. Se eliminarán tu cuenta, los perfiles de tus hijos y todo el progreso guardado.</li>
+    </ol>
+    <div class="callout">
+      Esta acción es <strong>permanente</strong> e inmediata: no podemos recuperar el progreso,
+      las estrellas ni las monedas de los perfiles una vez eliminados.
+    </div>
+
+    <h2>Opción 2 — Solicitarlo por correo</h2>
+    <p>
+      Si no podés acceder a la app, completá estos datos y te vamos a preparar un correo
+      prellenado para que solo tengas que enviarlo desde tu casilla:
+    </p>
+
+    <div class="form-box">
+      <label for="email">Correo electrónico de tu cuenta</label>
+      <input type="email" id="email" placeholder="tu@correo.com" required>
+
+      <label for="motivo">Contanos brevemente el motivo (opcional)</label>
+      <textarea id="motivo" placeholder="Ej: ya no uso la app, cambié de dispositivo, etc."></textarea>
+
+      <button class="btn-primary" onclick="prepararCorreo()">✉️ Preparar solicitud</button>
+      <p class="form-note">Se va a abrir tu aplicación de correo con un mensaje ya redactado, dirigido a hola@viko.com.ar</p>
+    </div>
+
+    <div class="confirm-box" id="confirmBox">
+      <h3>¡Casi listo!</h3>
+      <p>Se abrió (o debería abrirse) tu app de correo con la solicitud lista. Si no se abrió automáticamente, escribinos directamente a <a href="mailto:hola@viko.com.ar">hola@viko.com.ar</a> indicando el correo de tu cuenta.</p>
+    </div>
+
+    <h2>¿Qué se elimina exactamente?</h2>
+    <table>
+      <tr><th>Dato</th><th>¿Se elimina?</th></tr>
+      <tr><td>Cuenta del adulto (email, credenciales)</td><td>Sí</td></tr>
+      <tr><td>Perfiles de niños (nombre, avatar)</td><td>Sí</td></tr>
+      <tr><td>Progreso de juego (estrellas, monedas, niveles)</td><td>Sí</td></tr>
+      <tr><td>Estado de suscripción</td><td>Se cancela; gestioná el reembolso, si corresponde, desde Google Play</td></tr>
+    </table>
+    <p>
+      Las solicitudes por correo se procesan dentro de los <strong>30 días</strong>. Vas a
+      recibir una confirmación por email cuando el proceso esté completo.
+    </p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="privacidad.html">Privacidad</a>
+      <a href="terminos.html">Términos</a>
+      <a href="eliminar-cuenta.html">Eliminar cuenta</a>
+      <a href="mailto:hola@viko.com.ar">Contacto</a>
+    </div>
+    © 2026 Kid Genius. Hecho con cariño para las familias.
+  </div>
+</footer>
+
+<script>
+function prepararCorreo() {
+  const email = document.getElementById('email').value.trim();
+  const motivo = document.getElementById('motivo').value.trim();
+
+  if (!email) {
+    document.getElementById('email').focus();
+    document.getElementById('email').style.borderColor = '#FF8A73';
+    return;
+  }
+
+  const asunto = encodeURIComponent('Solicitud de eliminación de cuenta - Kid Genius');
+  const cuerpo = encodeURIComponent(
+    'Hola,\n\n' +
+    'Solicito la eliminación de mi cuenta de Kid Genius y de todos los datos asociados.\n\n' +
+    'Correo de la cuenta: ' + email + '\n' +
+    (motivo ? 'Motivo: ' + motivo + '\n' : '') +
+    '\nGracias.'
+  );
+
+  window.location.href = 'mailto:hola@viko.com.ar?subject=' + asunto + '&body=' + cuerpo;
+
+  document.getElementById('confirmBox').classList.add('show');
+  document.getElementById('confirmBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+</script>
+
+</body>
+</html>
