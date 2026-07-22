@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kid Genius — Confirmando...</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .bridge-wrap {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+  }
+  .bridge-card {
+    background: var(--cream-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    box-shadow: var(--shadow-soft);
+    max-width: 440px;
+  }
+  .bridge-icon {
+    font-size: 48px;
+    margin-bottom: 18px;
+  }
+  .bridge-card h1 {
+    font-size: 22px;
+    margin: 0 0 10px;
+  }
+  .bridge-card p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin-bottom: 22px;
+  }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 3px solid var(--border-soft);
+    border-top-color: var(--coral);
+    border-radius: 50%;
+    margin: 0 auto 18px;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="bridge-wrap">
+  <div class="bridge-card">
+    <div id="loadingState">
+      <div class="spinner"></div>
+      <h1>Abriendo Kid Genius...</h1>
+      <p>Un segundo, te llevamos a la app.</p>
+    </div>
+
+    <div id="fallbackState" class="hidden">
+      <div class="bridge-icon">🦉</div>
+      <h1 id="fallbackTitle">¡Ya casi!</h1>
+      <p id="fallbackMsg">Si la app no se abrió sola, tocá el botón.</p>
+      <button class="btn-primary" id="openBtn" onclick="abrirApp()">Abrir Kid Genius</button>
+      <p class="form-note" style="margin-top:18px;">Si no tenés la app instalada, buscá <strong>Kid Genius</strong> en Google Play.</p>
+    </div>
+
+    <div id="errorState" class="hidden">
+      <div class="bridge-icon">😕</div>
+      <h1>Este enlace ya no es válido</h1>
+      <p>Puede que haya expirado o ya se haya usado. Volvé a intentar la acción desde la app (por ejemplo, "olvidé mi contraseña" de nuevo).</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Lee los parámetros que Supabase agrega al link del email:
+  // token_hash, type (signup | recovery | invite | magiclink), y opcionalmente redirect_to
+  const params = new URLSearchParams(window.location.search);
+  const tokenHash = params.get('token_hash');
+  const type = params.get('type');
+
+  // Scheme de la app — CONFIRMAR que coincide con el "scheme" declarado en app.json de KidGenius
+  const APP_SCHEME = 'kidgenius';
+
+  function construirDeepLink() {
+    if (!tokenHash || !type) return null;
+    const ruta = type === 'recovery' ? 'reset-password' : 'confirm';
+    return `${APP_SCHEME}://${ruta}?token_hash=${encodeURIComponent(tokenHash)}&type=${encodeURIComponent(type)}`;
+  }
+
+  function abrirApp() {
+    const link = construirDeepLink();
+    if (link) window.location.href = link;
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const link = construirDeepLink();
+
+    if (!link) {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('errorState').classList.remove('hidden');
+      return;
+    }
+
+    if (type === 'recovery') {
+      document.getElementById('fallbackTitle').textContent = 'Creá tu nueva contraseña';
+      document.getElementById('fallbackMsg').textContent = 'Si la app no se abrió sola, tocá el botón para continuar.';
+    } else {
+      document.getElementById('fallbackTitle').textContent = '¡Cuenta confirmada!';
+      document.getElementById('fallbackMsg').textContent = 'Si la app no se abrió sola, tocá el botón para entrar.';
+    }
+
+    // Intento automático de abrir la app
+    window.location.href = link;
+
+    // Tras un momento, si seguimos acá, mostramos el botón de respaldo
+    // (el navegador no puede saber si el deep link tuvo éxito, así que
+    // el fallback aparece siempre por las dudas)
+    setTimeout(() => {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('fallbackState').classList.remove('hidden');
+    }, 1800);
+  });
+</script>
+
+</body>
+</html>
