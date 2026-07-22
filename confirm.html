@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kid Genius — Confirmar cuenta</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+  .bridge-wrap {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+  }
+  .bridge-card {
+    background: var(--cream-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    box-shadow: var(--shadow-soft);
+    max-width: 460px;
+  }
+  .bridge-icon { font-size: 48px; margin-bottom: 16px; }
+  .bridge-card h1 { font-size: 22px; margin: 0 0 12px; }
+  .bridge-card p { color: var(--ink-soft); font-size: 15px; margin-bottom: 20px; }
+  .paso {
+    text-align: left;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin: 18px 0;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .paso ol { margin: 8px 0 0; padding-left: 20px; }
+  .paso li { margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div class="bridge-wrap">
+  <div class="bridge-card">
+    <div class="bridge-icon">🦉</div>
+    <h1 id="titulo">Confirmando tu cuenta...</h1>
+    <p id="mensaje">Estamos abriendo Kid Genius en tu teléfono.</p>
+
+    <a class="btn-primary" id="openBtn" href="#" style="text-decoration:none;">Abrir Kid Genius</a>
+
+    <div class="paso" id="ayuda">
+      <strong>¿No se abrió la app?</strong>
+      <ol>
+        <li>Asegurate de tener <strong>Kid Genius</strong> instalada en este teléfono.</li>
+        <li>Si estás leyendo esto en una computadora, abrí el correo desde tu teléfono.</li>
+        <li>Si el problema sigue, entrá a la app e iniciá sesión: si ya confirmaste, vas a poder ingresar normalmente.</li>
+      </ol>
+    </div>
+
+    <p style="font-size:13px; margin-bottom:0;">
+      ¿Necesitás ayuda? Escribinos a <a href="mailto:hola@viko.com.ar">hola@viko.com.ar</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const tokenHash = params.get('token_hash');
+  const type = params.get('type') || 'signup';
+
+  // Esta misma URL es el App Link que Android intercepta. Si el usuario llegó
+  // hasta acá viendo la página, es porque NO se interceptó (navegador de escritorio,
+  // app sin instalar, o navegador embebido que esquiva App Links).
+  // El botón reintenta con la misma URL: desde un navegador normal en Android,
+  // el toque directo del usuario suele disparar el App Link correctamente.
+  if (tokenHash) {
+    const destino = window.location.origin + '/confirm?token_hash=' +
+                    encodeURIComponent(tokenHash) + '&type=' + encodeURIComponent(type);
+    document.getElementById('openBtn').setAttribute('href', destino);
+  } else {
+    document.getElementById('titulo').textContent = 'Enlace incompleto';
+    document.getElementById('mensaje').textContent =
+      'Este enlace no tiene la información necesaria. Volvé a intentar desde el correo original.';
+    document.getElementById('openBtn').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
