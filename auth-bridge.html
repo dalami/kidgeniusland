@@ -61,7 +61,7 @@
       <div class="bridge-icon">🦉</div>
       <h1 id="fallbackTitle">¡Ya casi!</h1>
       <p id="fallbackMsg">Si la app no se abrió sola, tocá el botón.</p>
-      <button class="btn-primary" id="openBtn" onclick="abrirApp()">Abrir Kid Genius</button>
+      <a class="btn-primary" id="openBtn" href="#" style="text-decoration:none;">Abrir Kid Genius</a>
       <p class="form-note" style="margin-top:18px;">Si no tenés la app instalada, buscá <strong>Kid Genius</strong> en Google Play.</p>
     </div>
 
@@ -89,11 +89,6 @@
     return `${APP_SCHEME}://${ruta}?token_hash=${encodeURIComponent(tokenHash)}&type=${encodeURIComponent(type)}`;
   }
 
-  function abrirApp() {
-    const link = construirDeepLink();
-    if (link) window.location.href = link;
-  }
-
   window.addEventListener('DOMContentLoaded', () => {
     const link = construirDeepLink();
 
@@ -103,24 +98,28 @@
       return;
     }
 
+    // El botón es un <a href> REAL apuntando al esquema custom — más confiable
+    // que window.location.href por script en navegadores móviles, que a veces
+    // bloquean redirects a esquemas custom si no vienen de un gesto directo del usuario.
+    document.getElementById('openBtn').setAttribute('href', link);
+
     if (type === 'recovery') {
       document.getElementById('fallbackTitle').textContent = 'Creá tu nueva contraseña';
-      document.getElementById('fallbackMsg').textContent = 'Si la app no se abrió sola, tocá el botón para continuar.';
+      document.getElementById('fallbackMsg').textContent = 'Tocá el botón para continuar en la app.';
     } else {
       document.getElementById('fallbackTitle').textContent = '¡Cuenta confirmada!';
-      document.getElementById('fallbackMsg').textContent = 'Si la app no se abrió sola, tocá el botón para entrar.';
+      document.getElementById('fallbackMsg').textContent = 'Tocá el botón para entrar a la app.';
     }
 
-    // Intento automático de abrir la app
-    window.location.href = link;
+    // Intento automático (puede funcionar en algunos navegadores/casos)
+    try { window.location.href = link; } catch (e) {}
 
-    // Tras un momento, si seguimos acá, mostramos el botón de respaldo
-    // (el navegador no puede saber si el deep link tuvo éxito, así que
-    // el fallback aparece siempre por las dudas)
+    // Mostramos el botón de respaldo real (siempre, sin esperar demasiado,
+    // ya que el intento automático por script no es confiable en todos los casos)
     setTimeout(() => {
       document.getElementById('loadingState').classList.add('hidden');
       document.getElementById('fallbackState').classList.remove('hidden');
-    }, 1800);
+    }, 900);
   });
 </script>
 
