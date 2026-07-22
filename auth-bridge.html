@@ -81,12 +81,13 @@
   const type = params.get('type');
 
   // Scheme de la app — CONFIRMAR que coincide con el "scheme" declarado en app.json de KidGenius
-  const APP_SCHEME = 'kidgenius';
+  // App Links HTTPS — Android intercepta estas URLs y las abre directo con la app
+  const APP_BASE = 'https://kidgeniusland.vercel.app';
 
   function construirDeepLink() {
     if (!tokenHash || !type) return null;
     const ruta = type === 'recovery' ? 'reset-password' : 'confirm';
-    return `${APP_SCHEME}://${ruta}?token_hash=${encodeURIComponent(tokenHash)}&type=${encodeURIComponent(type)}`;
+    return `${APP_BASE}/${ruta}?token_hash=${encodeURIComponent(tokenHash)}&type=${encodeURIComponent(type)}`;
   }
 
   window.addEventListener('DOMContentLoaded', () => {
